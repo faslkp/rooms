@@ -124,7 +124,7 @@ describe('AuthContext', () => {
       });
     });
 
-    expect(api.post).toHaveBeenCalledWith('/auth/register/', {
+    expect(api.post).toHaveBeenCalledWith('/api/auth/register/', {
       name: 'Test User',
       email: 'test@example.com',
       password: 'pass123',
@@ -153,11 +153,11 @@ describe('AuthContext', () => {
       });
     });
 
-    expect(api.post).toHaveBeenCalledWith('/auth/login/', {
+    expect(api.post).toHaveBeenCalledWith('/api/auth/login/', {
       email: 'test@example.com',
       password: 'pass123',
     });
-    expect(api.get).toHaveBeenCalledWith('/auth/profile/');
+    expect(api.get).toHaveBeenCalledWith('/api/auth/profile/');
     expect(result.current.user).toEqual(mockProfile);
     expect(result.current.access).toBe(mockTokens.access);
     expect(result.current.refresh).toBe(mockTokens.refresh);

@@ -45,7 +45,7 @@ export function AuthProvider({ children }) {
   };
 
   const register = async ({ name, email, password, confirmPassword }) => {
-    const res = await api.post('/auth/register/', {
+    const res = await api.post('/api/auth/register/', {
       name,
       email,
       password,
@@ -55,14 +55,14 @@ export function AuthProvider({ children }) {
   };
 
   const login = async ({ email, password }) => {
-    const tokenRes = await api.post('/auth/login/', { email, password });
+    const tokenRes = await api.post('/api/auth/login/', { email, password });
     const tokens = tokenRes.data;
 
     // Persist tokens immediately
     saveAuth({ user: null, access: tokens.access, refresh: tokens.refresh });
 
     // Fetch profile
-    const me = await api.get('/auth/profile/');
+    const me = await api.get('/api/auth/profile/');
 
     // Save user while keeping tokens
     saveAuth({ user: me.data, access: tokens.access, refresh: tokens.refresh });
