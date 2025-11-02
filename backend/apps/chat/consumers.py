@@ -6,8 +6,6 @@ from django.utils import timezone
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 
-from apps.rooms.models import Room
-from apps.chat.models import Message
 from apps.common.logging_utils import set_request_context
 
 
@@ -101,10 +99,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def room_exists(self, room_id: int) -> bool:
+        from apps.rooms.models import Room
         return Room.objects.filter(id=room_id, is_active=True).exists()
 
     @database_sync_to_async
     def save_message(self, room_id: int, user_id: int, content: str):
+        from apps.chat.models import Message
         msg = Message.objects.create(
             room_id=room_id,
             user_id=user_id,
