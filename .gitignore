@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.env
+*.venv
+env/
+venv/
+ENV/
+.Python
+db.sqlite3
+*.sqlite3
+*.log
+
+# Django
+media/
+staticfiles/
+static/
+local_settings.py
+
+# Django migrations
+*/migrations/
+!*/migrations/__init__.py
+
+# VSCode
+.vscode/
+
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Build
+build/
+dist/
+*.tgz
+
+# React
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+*.eslintcache
+coverage/
+*.cache
+
+# Test coverage
+htmlcov/
+.coverage
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Others
+.idea/
+
