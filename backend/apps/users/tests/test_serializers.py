@@ -65,11 +65,8 @@ class UserRegistrationSerializerTest(TestCase):
         """Test serializer removes confirm_password in create() method"""
         serializer = UserRegistrationSerializer(data=self.valid_data)
         self.assertTrue(serializer.is_valid())
-        # confirm_password is still in validated_data at this point
-        # but it's removed in the create() method
         user = serializer.save()
         self.assertIsInstance(user, User)
-        # Verify user was created successfully without confirm_password in DB
         self.assertEqual(user.email, 'test@example.com')
 
 
@@ -170,8 +167,6 @@ class UserSerializerTest(TestCase):
         )
         self.assertTrue(serializer.is_valid())
         serializer.save()
-        # ID should not change
         self.assertEqual(self.user.id, self.user.id)
-        # Name should be updated
         self.assertEqual(self.user.name, 'Updated Name')
 

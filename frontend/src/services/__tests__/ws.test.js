@@ -6,11 +6,10 @@ describe('WebSocket service', () => {
 
   beforeEach(() => {
     mockWebSocket = null;
-    // Reset WebSocket mock with helper methods
     global.WebSocket = class MockWebSocket {
       constructor(url) {
         this.url = url;
-        this.readyState = 0; // CONNECTING
+        this.readyState = 0;
         this.onopen = null;
         this.onclose = null;
         this.onerror = null;
@@ -24,15 +23,14 @@ describe('WebSocket service', () => {
       }
 
       close() {
-        this.readyState = 3; // CLOSED
+        this.readyState = 3;
         if (this.onclose) {
           this.onclose({ code: 1000, reason: 'Closed' });
         }
       }
 
-      // Helper methods for testing
       _simulateOpen() {
-        this.readyState = 1; // OPEN
+        this.readyState = 1;
         if (this.onopen) {
           this.onopen();
         }
@@ -51,7 +49,7 @@ describe('WebSocket service', () => {
       }
 
       _simulateClose(event) {
-        this.readyState = 3; // CLOSED
+        this.readyState = 3;
         if (this.onclose) {
           this.onclose(event || { code: 1000, reason: 'Closed' });
         }

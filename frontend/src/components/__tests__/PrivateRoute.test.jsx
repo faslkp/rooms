@@ -3,7 +3,6 @@ import { screen, render } from '@testing-library/react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import PrivateRoute from '../PrivateRoute';
 
-// Mock useAuth
 const mockUseAuth = vi.fn();
 vi.mock('../../context/AuthContext', () => ({
   useAuth: () => mockUseAuth(),
@@ -36,11 +35,9 @@ describe('PrivateRoute', () => {
       </BrowserRouter>
     );
 
-    // Navigate to protected route
     window.history.pushState({}, '', '/test');
 
     expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
-    // Note: Navigation behavior is tested via redirect logic
   });
 
   it('renders children when authenticated', () => {

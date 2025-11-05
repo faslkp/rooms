@@ -51,8 +51,7 @@ class RoomSerializerTest(TestCase):
             data={'id': 999, 'name': 'Updated Room'},
             partial=True
         )
-        # Read-only fields should not be changed
-        self.assertEqual(self.room.id, self.room.id)  # ID should not change
+        self.assertEqual(self.room.id, self.room.id)
 
 
 class RoomCreateSerializerTest(TestCase):

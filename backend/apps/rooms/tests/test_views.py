@@ -39,9 +39,7 @@ class RoomViewSetTest(TestCase):
         self.client.force_authenticate(user=self.user)
         response = self.client.get('/api/rooms/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # ViewSet returns a list directly (not paginated)
         self.assertIsInstance(response.data, list)
-        # Should only return active rooms
         room_ids = [room['id'] for room in response.data]
         self.assertIn(self.room.id, room_ids)
         self.assertNotIn(self.inactive_room.id, room_ids)
@@ -63,10 +61,8 @@ class RoomViewSetTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['name'], 'New Room')
         self.assertEqual(response.data['room_type'], 'video')
-        # RoomSerializer includes creator as nested object
         if 'creator' in response.data:
             self.assertEqual(response.data['creator']['id'], self.user.id)
-        # Verify room was created
         created_room = Room.objects.get(name='New Room')
         self.assertEqual(created_room.creator.id, self.user.id)
     
@@ -83,8 +79,8 @@ class RoomViewSetTest(TestCase):
         """Test creating room with invalid data"""
         self.client.force_authenticate(user=self.user)
         data = {
-            'name': '',  # Empty name
-            'room_type': 'invalid'  # Invalid room type
+            'name': '',
+            'room_type': 'invalid'
         }
         response = self.client.post('/api/rooms/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -114,7 +110,6 @@ class RoomViewSetTest(TestCase):
         response = self.client.put(f'/api/rooms/{self.room.id}/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'Updated Room')
-        # Verify update in database
         self.room.refresh_from_db()
         self.assertEqual(self.room.name, 'Updated Room')
     
@@ -137,7 +132,6 @@ class RoomViewSetTest(TestCase):
         self.client.force_authenticate(user=self.user)
         response = self.client.delete(f'/api/rooms/{self.room.id}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        # Verify soft delete
         self.room.refresh_from_db()
         self.assertFalse(self.room.is_active)
     
@@ -146,7 +140,6 @@ class RoomViewSetTest(TestCase):
         self.client.force_authenticate(user=self.other_user)
         response = self.client.delete(f'/api/rooms/{self.room.id}/')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        # Verify room still exists
         self.room.refresh_from_db()
         self.assertTrue(self.room.is_active)
     

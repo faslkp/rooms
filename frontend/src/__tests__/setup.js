@@ -2,15 +2,12 @@ import { expect, afterEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
 
-// Extend Vitest's expect with jest-dom matchers
 expect.extend(matchers);
 
-// Cleanup after each test
 afterEach(() => {
   cleanup();
 });
 
-// Mock localStorage
 const localStorageMock = (() => {
   let store = {};
   return {
@@ -28,7 +25,6 @@ const localStorageMock = (() => {
 })();
 global.localStorage = localStorageMock;
 
-// Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: (query) => ({
@@ -43,7 +39,6 @@ Object.defineProperty(window, 'matchMedia', {
   }),
 });
 
-// Mock WebSocket
 global.WebSocket = class MockWebSocket {
   constructor(url) {
     this.url = url;
@@ -66,7 +61,6 @@ global.WebSocket = class MockWebSocket {
     }
   }
 
-  // Helper methods for testing
   _simulateOpen() {
     this.readyState = WebSocket.OPEN;
     if (this.onopen) {
@@ -92,7 +86,6 @@ WebSocket.OPEN = 1;
 WebSocket.CLOSING = 2;
 WebSocket.CLOSED = 3;
 
-// Mock RTCPeerConnection
 global.RTCPeerConnection = class MockRTCPeerConnection {
   constructor(config) {
     this.config = config;
@@ -131,7 +124,6 @@ global.RTCPeerConnection = class MockRTCPeerConnection {
   }
 
   async addIceCandidate(candidate) {
-    // Mock implementation
   }
 
   addTrack(track, stream) {
@@ -147,7 +139,6 @@ global.RTCPeerConnection = class MockRTCPeerConnection {
     this.iceConnectionState = 'closed';
   }
 
-  // Helper methods for testing
   _simulateIceCandidate(candidate) {
     if (this.onicecandidate) {
       this.onicecandidate({ candidate });
@@ -161,7 +152,6 @@ global.RTCPeerConnection = class MockRTCPeerConnection {
   }
 };
 
-// Mock RTCSessionDescription
 global.RTCSessionDescription = class MockRTCSessionDescription {
   constructor(description) {
     this.type = description.type;
@@ -169,12 +159,10 @@ global.RTCSessionDescription = class MockRTCSessionDescription {
   }
 };
 
-// Mock navigator.mediaDevices.getUserMedia
 global.navigator = {
   ...global.navigator,
   mediaDevices: {
     getUserMedia: async () => {
-      // Mock MediaStream
       const stream = {
         getTracks: () => [],
         getAudioTracks: () => [],

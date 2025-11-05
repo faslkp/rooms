@@ -54,7 +54,7 @@ export default function Rooms() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="max-w-5xl mx-auto p-6 w-full h-full overflow-y-auto overflow-x-hidden">
       <h1 className="text-2xl font-bold mb-4">Rooms</h1>
 
       <form onSubmit={onCreate} className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-3 bg-white p-4 border rounded">
@@ -100,8 +100,8 @@ export default function Rooms() {
       ) : rooms.length === 0 ? (
         <p className="text-sm text-gray-600">No rooms yet.</p>
       ) : (
-        <div className="bg-white border rounded">
-          <table className="w-full text-sm">
+        <div className="bg-white border rounded overflow-x-auto">
+          <table className="w-full text-sm min-w-0">
             <thead className="bg-gray-50 text-left">
               <tr>
                 <th className="px-4 py-2">Name</th>

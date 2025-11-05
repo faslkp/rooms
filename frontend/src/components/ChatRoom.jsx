@@ -8,8 +8,9 @@ export default function ChatRoom({ roomId, token, wsBase = (import.meta.env.VITE
   const [isOpen, setIsOpen] = useState(false);
   const [wsError, setWsError] = useState(null);
   const wsRef = useRef(null);
+  const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
 
-  // Load history
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -23,7 +24,6 @@ export default function ChatRoom({ roomId, token, wsBase = (import.meta.env.VITE
     return () => { mounted = false; };
   }, [roomId]);
 
-  // Connect WS
   useEffect(() => {
     setIsOpen(false);
     setWsError(null);
@@ -45,7 +45,6 @@ export default function ChatRoom({ roomId, token, wsBase = (import.meta.env.VITE
         console.error('WS error', e);
       },
       onMessage: (data) => {
-        // Only handle chat messages here (webrtc handled elsewhere)
         if (data?.content && data?.user) {
           setMessages((prev) => [...prev, data]);
         }
@@ -54,6 +53,13 @@ export default function ChatRoom({ roomId, token, wsBase = (import.meta.env.VITE
     wsRef.current = ws;
     return () => { ws.close(); };
   }, [roomId, token, wsBase]);
+
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      const container = messagesContainerRef.current;
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [messages]);
 
   const sendMessage = () => {
     const text = input.trim();
@@ -71,32 +77,37 @@ export default function ChatRoom({ roomId, token, wsBase = (import.meta.env.VITE
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {!isOpen && (
-        <div className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded px-2 py-1 mb-2">
-          Connecting to room chat...
+    <div className="flex flex-col max-h-[300px] w-full min-w-0 overflow-hidden">
+      {(!isOpen || wsError) && (
+        <div className="flex-shrink-0 mb-2 space-y-2">
+          {!isOpen && (
+            <div className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded px-2 py-1">
+              Connecting to room chat...
+            </div>
+          )}
+          {wsError && (
+            <div className="text-xs text-red-700 bg-red-50 border border-red-200 rounded px-2 py-1">
+              {wsError}
+            </div>
+          )}
         </div>
       )}
-      {wsError && (
-        <div className="text-xs text-red-700 bg-red-50 border border-red-200 rounded px-2 py-1 mb-2">
-          {wsError}
-        </div>
-      )}
-      <div className="flex-1 overflow-y-auto bg-white border rounded p-3 space-y-2">
+      <div ref={messagesContainerRef} className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-white border rounded p-3 space-y-2" style={{ maxHeight: '100%' }}>
         {messages.map((m) => (
-          <div key={m.id ?? Math.random()} className="text-sm">
+          <div key={m.id ?? Math.random()} className="text-sm break-words">
             <span className="font-medium">{m.user?.name || m.user?.email}:</span>{' '}
             <span>{m.content}</span>
-            <span className="text-xs text-gray-400 ml-2">{m.created_at && new Date(m.created_at).toLocaleTimeString()}</span>
+            <span className="text-xs text-gray-400 ml-2 whitespace-nowrap">{m.created_at && new Date(m.created_at).toLocaleTimeString()}</span>
           </div>
         ))}
         {messages.length === 0 && (
           <div className="text-sm text-gray-500">No messages yet.</div>
         )}
+        <div ref={messagesEndRef} />
       </div>
-      <div className="mt-3 flex gap-2">
+      <div className="flex-shrink-0 mt-3 flex gap-2 min-w-0">
         <input
-          className="flex-1 rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="flex-1 rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 min-w-0"
           placeholder={isOpen ? 'Type a message' : 'Waiting for connection...'}
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -106,7 +117,7 @@ export default function ChatRoom({ roomId, token, wsBase = (import.meta.env.VITE
         <button
           onClick={sendMessage}
           disabled={!isOpen}
-          className="rounded bg-indigo-600 text-white px-4 py-2 hover:bg-indigo-700 disabled:opacity-50"
+          className="rounded bg-indigo-600 text-white px-4 py-2 hover:bg-indigo-700 disabled:opacity-50 flex-shrink-0"
         >
           Send
         </button>

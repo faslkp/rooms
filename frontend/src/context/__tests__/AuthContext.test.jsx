@@ -4,7 +4,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider, useAuth } from '../AuthContext';
 import api from '../../services/api';
 
-// Mock API
 vi.mock('../../services/api', () => ({
   default: {
     post: vi.fn(),
@@ -67,7 +66,6 @@ describe('AuthContext', () => {
       expect(result.current.loading).toBe(false);
     });
 
-    // Test through login which internally calls saveAuth
     const mockTokens = { access: 'new-access-token', refresh: 'refresh-token' };
     const mockProfile = { id: 1, email: 'test@example.com', name: 'Test User' };
     api.post.mockResolvedValueOnce({ data: mockTokens });

@@ -31,7 +31,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.close(code=4404)
             return
 
-        # Accept first, then try to join group; if it fails, close with code 1011
         await self.accept()
         logger.info("WS ACCEPT")
         try:

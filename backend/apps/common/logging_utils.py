@@ -20,17 +20,14 @@ class SensitiveDataFilter(logging.Filter):
         try:
             msg = str(record.getMessage())
         except TypeError:
-            # If getMessage() fails due to formatting issues, use record.msg directly
             msg = str(record.msg % record.args if record.args else record.msg)
         
-        # Mask headers first
         msg = self.header_re.sub(r"\1=***", msg)
-        # Then mask other sensitive keys
         for key in SENSITIVE_KEYS:
             pattern = re.compile(r'(\"?' + re.escape(key) + r'\"?\s*[:=]\s*)(\".*?\"|[^,}\s]+)', re.IGNORECASE)
             msg = pattern.sub(r'\1***', msg)
         record.msg = msg
-        record.args = ()  # Clear args to prevent formatting issues
+        record.args = ()
         return True
 
 

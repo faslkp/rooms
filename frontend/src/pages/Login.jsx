@@ -10,7 +10,6 @@ export default function Login() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
-  // If already authenticated, redirect away from login
   useEffect(() => {
     let hasToken = !!access;
     try {
@@ -41,7 +40,7 @@ export default function Login() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6">
+    <div className="max-w-md mx-auto p-6 w-full h-full overflow-y-auto overflow-x-hidden">
       <h1 className="text-2xl font-bold mb-4">Login</h1>
       {error && (
         <div className="mb-4 rounded bg-red-50 text-red-700 px-3 py-2 text-sm border border-red-200">

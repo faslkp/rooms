@@ -6,7 +6,7 @@ from apps.users.api.serializers import UserSerializer
 class RoomSerializer(serializers.ModelSerializer):
     """Serializer for room details (GET responses)"""
     creator = UserSerializer(read_only=True)
-    creator_name = serializers.CharField(source='creator.name', read_only=True)  # Quick access to creator name
+    creator_name = serializers.CharField(source='creator.name', read_only=True)
     
     class Meta:
         model = Room

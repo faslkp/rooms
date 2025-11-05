@@ -28,7 +28,6 @@ class UserAdmin(BaseUserAdmin):
 
     readonly_fields = ('last_login', 'date_joined')
 
-    # Use email as the username field
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
         if 'username' in form.base_fields:

@@ -55,7 +55,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Replace username field with email field
         self.fields.pop('username', None)
         self.fields['email'] = serializers.EmailField(required=True, label='Email')
     
@@ -78,7 +77,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         if not user.is_active:
             raise AuthenticationFailed('User account is disabled.')
         
-        # Map email to the field expected by parent (username_field = 'email')
         attrs[self.username_field] = email
         
         return super().validate(attrs)

@@ -9,7 +9,6 @@ export function AuthProvider({ children }) {
   const [refresh, setRefresh] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Rehydrate once on mount
   useEffect(() => {
     try {
       const raw = localStorage.getItem('auth');
@@ -23,7 +22,6 @@ export function AuthProvider({ children }) {
     setLoading(false);
   }, []);
 
-  // Keep axios header in sync with access
   useEffect(() => {
     if (access) {
       api.defaults.headers.common.Authorization = `Bearer ${access}`;
@@ -58,19 +56,15 @@ export function AuthProvider({ children }) {
     const tokenRes = await api.post('/api/auth/login/', { email, password });
     const tokens = tokenRes.data;
 
-    // Persist tokens immediately
     saveAuth({ user: null, access: tokens.access, refresh: tokens.refresh });
 
-    // Fetch profile
     const me = await api.get('/api/auth/profile/');
 
-    // Save user while keeping tokens
     saveAuth({ user: me.data, access: tokens.access, refresh: tokens.refresh });
     return me.data;
   };
 
   const logout = () => {
-    // Clear state first to trigger rerender instantly
     setUser(null);
     setAccess(null);
     setRefresh(null);

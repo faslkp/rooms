@@ -30,26 +30,32 @@ export default function RoomDetail() {
     return () => { mounted = false; };
   }, [roomId]);
 
-  if (loading) return <div className="max-w-5xl mx-auto p-6 text-sm text-gray-600">Loading...</div>;
-  if (error) return <div className="max-w-5xl mx-auto p-6 text-sm text-red-600">{error}</div>;
+  if (loading) return <div className="max-w-5xl mx-auto p-6 text-sm text-gray-600 h-full overflow-y-auto">Loading...</div>;
+  if (error) return <div className="max-w-5xl mx-auto p-6 text-sm text-red-600 h-full overflow-y-auto">{error}</div>;
   if (!room) return null;
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-4">
-      <div className="bg-white border rounded p-4">
-        <h1 className="text-xl font-semibold">{room.name}</h1>
-        <p className="text-sm text-gray-600">{room.description || '—'}</p>
+    <div className="h-full w-full max-w-5xl mx-auto p-6 flex flex-col overflow-hidden md:overflow-hidden overflow-y-auto md:overflow-y-hidden">
+      <div className="bg-white border rounded p-4 mb-4 flex-shrink-0 overflow-hidden">
+        <h1 className="text-xl font-semibold break-words">{room.name}</h1>
+        <p className="text-sm text-gray-600 break-words">{room.description || '—'}</p>
         <div className="text-xs text-gray-500 mt-1">Type: {room.room_type}</div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div className="h-96">
-          <h2 className="font-medium mb-2">Chat</h2>
-          <ChatRoom roomId={roomId} token={access} />
-        </div>
-        <div className="h-96">
-          <h2 className="font-medium mb-2">Video</h2>
-          <VideoChat roomId={roomId} token={access} />
+      <div className="flex-1 min-h-0 overflow-hidden md:overflow-hidden overflow-y-auto md:overflow-y-hidden">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:h-full min-h-0 min-w-0 md:overflow-hidden" style={{ gridAutoRows: '1fr' }}>
+          <div className="min-h-0 min-w-0 flex flex-col md:overflow-hidden">
+            <h2 className="font-medium mb-2 flex-shrink-0">Chat</h2>
+            <div className="flex-1 min-h-0 md:overflow-hidden overflow-y-auto md:overflow-y-hidden min-h-[300px] md:min-h-0">
+              <ChatRoom roomId={roomId} token={access} />
+            </div>
+          </div>
+          <div className="min-h-0 min-w-0 flex flex-col md:overflow-hidden">
+            <h2 className="font-medium mb-2 flex-shrink-0">Video</h2>
+            <div className="flex-1 min-h-0 md:overflow-hidden md:min-h-0">
+              <VideoChat roomId={roomId} token={access} />
+            </div>
+          </div>
         </div>
       </div>
     </div>

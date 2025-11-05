@@ -19,7 +19,7 @@ class RequestIDMiddlewareTest(TestCase):
         request = self.factory.get('/test/')
         self.middleware.process_request(request)
         self.assertIsNotNone(getattr(request, '_req_id', None))
-        self.assertEqual(len(request._req_id), 12)  # UUID hex[:12]
+        self.assertEqual(len(request._req_id), 12)
     
     def test_uses_existing_request_id(self):
         """Test middleware uses X-Request-ID header if provided"""
@@ -40,8 +40,7 @@ class RequestIDMiddlewareTest(TestCase):
         request = self.factory.get('/test/')
         self.middleware.process_request(request)
         response = self.middleware.process_response(request, HttpResponse())
-        # Context should be cleared (tested via logging filter behavior)
-        self.assertIsNotNone(response)  # Response should be returned
+        self.assertIsNotNone(response)
 
 
 class RequestLoggingMiddlewareTest(TestCase):
@@ -63,16 +62,13 @@ class RequestLoggingMiddlewareTest(TestCase):
         self.middleware.process_request(request)
         response = HttpResponse(status=200)
         response = self.middleware.process_response(request, response)
-        # Response should be returned (timing logged internally)
         self.assertEqual(response.status_code, 200)
     
     def test_handles_missing_start_time(self):
         """Test middleware handles missing start time gracefully"""
         request = self.factory.get('/test/')
-        # Skip process_request to simulate missing start time
         response = HttpResponse(status=200)
         response = self.middleware.process_response(request, response)
-        # Should not raise error
         self.assertIsNotNone(response)
     
     def test_calculates_duration(self):
@@ -80,9 +76,8 @@ class RequestLoggingMiddlewareTest(TestCase):
         request = self.factory.get('/test/')
         self.middleware.process_request(request)
         import time
-        time.sleep(0.01)  # Small delay
+        time.sleep(0.01)
         response = HttpResponse(status=200)
         response = self.middleware.process_response(request, response)
-        # Duration should be logged (tested via logging output)
         self.assertIsNotNone(response)
 

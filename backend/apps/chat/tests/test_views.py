@@ -29,7 +29,6 @@ class RoomMessagesListViewTest(TestCase):
             creator=self.creator,
             room_type='chat'
         )
-        # Create some messages
         self.message1 = Message.objects.create(
             room=self.room,
             user=self.user,
@@ -56,7 +55,6 @@ class RoomMessagesListViewTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('results', response.data)
         self.assertEqual(len(response.data['results']), 3)
-        # Messages should be in chronological order
         messages = response.data['results']
         self.assertEqual(messages[0]['content'], 'First message')
         self.assertEqual(messages[1]['content'], 'Second message')
@@ -98,17 +96,14 @@ class RoomMessagesListViewTest(TestCase):
     def test_get_messages_with_before(self):
         """Test retrieving messages with before parameter (pagination)"""
         self.client.force_authenticate(user=self.user)
-        # Get first message's timestamp
         before_timestamp = self.message2.created_at.isoformat()
         response = self.client.get(
             f'/api/rooms/{self.room.id}/messages/',
             {'before': before_timestamp}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Should only return messages before message2
         results = response.data['results']
         self.assertLessEqual(len(results), 2)
-        # Should not include message2 or message3
         message_contents = [msg['content'] for msg in results]
         self.assertNotIn('Second message', message_contents)
         self.assertNotIn('Third message', message_contents)
@@ -128,10 +123,9 @@ class RoomMessagesListViewTest(TestCase):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(
             f'/api/rooms/{self.room.id}/messages/',
-            {'limit': 1000}  # Exceeds max
+            {'limit': 1000}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Should be capped at 200, but we only have 3 messages
         self.assertEqual(len(response.data['results']), 3)
     
     def test_get_messages_limit_min(self):
@@ -139,9 +133,8 @@ class RoomMessagesListViewTest(TestCase):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(
             f'/api/rooms/{self.room.id}/messages/',
-            {'limit': 0}  # Below minimum
+            {'limit': 0}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Should use default or minimum 1
         self.assertGreaterEqual(len(response.data['results']), 1)
 

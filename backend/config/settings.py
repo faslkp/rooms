@@ -20,7 +20,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5173',
 ]
 
-# In development, allow all origins to simplify local setup
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 
@@ -43,7 +42,6 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'channels',
-    # apps
     'apps.common',
     'apps.users',
     'apps.rooms',
@@ -166,7 +164,7 @@ LOGGING = {
             'formatter': 'verbose',
             'level': LOG_LEVEL,
             'filename': str(LOG_DIR / 'app.log'),
-            'maxBytes': 5 * 1024 * 1024,  # 5 MB
+            'maxBytes': 5 * 1024 * 1024,
             'backupCount': 3,
             'encoding': 'utf-8',
         },
@@ -230,8 +228,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
     'ALGORITHM': 'HS256',

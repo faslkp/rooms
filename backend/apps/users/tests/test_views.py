@@ -26,7 +26,6 @@ class UserRegistrationViewTest(TestCase):
         self.assertIn('id', response.data)
         self.assertEqual(response.data['email'], 'test@example.com')
         self.assertEqual(response.data['name'], 'Test User')
-        # Verify user was created
         self.assertTrue(User.objects.filter(email='test@example.com').exists())
     
     def test_register_duplicate_email(self):
@@ -152,7 +151,6 @@ class UserProfileViewTest(TestCase):
     def test_update_profile_success(self):
         """Test authenticated user can update their profile"""
         self.client.force_authenticate(user=self.user)
-        # PUT requires all fields, so include all required fields
         data = {
             'name': 'Updated Name',
             'email': self.user.email,
@@ -160,7 +158,6 @@ class UserProfileViewTest(TestCase):
         response = self.client.put(self.profile_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'Updated Name')
-        # Verify update in database
         self.user.refresh_from_db()
         self.assertEqual(self.user.name, 'Updated Name')
     
@@ -176,7 +173,6 @@ class UserProfileViewTest(TestCase):
         user_id = self.user.id
         response = self.client.delete(self.profile_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        # Verify user was deleted from database
         self.assertFalse(User.objects.filter(id=user_id).exists())
     
     def test_delete_profile_unauthorized(self):

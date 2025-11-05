@@ -21,7 +21,6 @@ describe('WebRTC service', () => {
       ]),
     };
 
-    // Mock RTCPeerConnection
     global.RTCPeerConnection = class MockRTCPeerConnection {
       constructor(config) {
         this.config = config;
@@ -57,7 +56,6 @@ describe('WebRTC service', () => {
       }
 
       async addIceCandidate(candidate) {
-        // Mock implementation
       }
 
       addTrack(track, stream) {
@@ -86,7 +84,6 @@ describe('WebRTC service', () => {
     expect(mockPeerConnection).toBeTruthy();
     expect(mockPeerConnection.config.iceServers).toBeDefined();
     expect(mockPeerConnection.config.iceServers[0].urls).toContain('stun:');
-    // ontrack should be set (might be wrapped, so check it's a function)
     expect(typeof mockPeerConnection.ontrack).toBe('function');
     expect(mockPeerConnection.onicecandidate).toBeTruthy();
   });
@@ -157,7 +154,6 @@ describe('WebRTC service', () => {
       sdpMLineIndex: 0,
     };
 
-    // Should not throw error
     await expect(addRemoteIceCandidate(pc, candidate)).resolves.not.toThrow();
   });
 });

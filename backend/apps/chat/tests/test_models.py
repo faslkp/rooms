@@ -56,7 +56,6 @@ class MessageModelTest(TestCase):
             user=self.user,
             content='First message'
         )
-        # Small delay to ensure different timestamps
         import time
         time.sleep(0.01)
         message2 = Message.objects.create(

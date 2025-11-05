@@ -126,10 +126,7 @@ class SensitiveDataFilterTest(TestCase):
             exc_info=None
         )
         self.filter.filter(record)
-        # Check that the header value is masked
         self.assertIn('***', record.msg)
-        # Verify token123 is masked (should be replaced with ***)
-        # The pattern should match "Authorization=Bearer token123" and replace with "Authorization=***"
         self.assertTrue(record.msg.startswith('Authorization='))
         self.assertNotIn('token123', record.msg)
     
@@ -146,7 +143,6 @@ class SensitiveDataFilterTest(TestCase):
         )
         original_msg = record.msg
         self.filter.filter(record)
-        # Non-sensitive fields should still be present
         self.assertIn('user_id=5', record.msg)
         self.assertIn('room_id=10', record.msg)
         self.assertIn('action=create', record.msg)

@@ -14,12 +14,10 @@ describe('API service', () => {
     };
     localStorage.setItem('auth', JSON.stringify(mockAuth));
 
-    // Mock axios request
     const requestConfig = {
       headers: {},
     };
 
-    // Simulate interceptor
     api.interceptors.request.handlers[0].fulfilled(requestConfig);
 
     expect(requestConfig.headers.Authorization).toBe('Bearer test-access-token');
@@ -44,7 +42,6 @@ describe('API service', () => {
       headers: {},
     };
 
-    // Should not throw error
     expect(() => {
       api.interceptors.request.handlers[0].fulfilled(requestConfig);
     }).not.toThrow();

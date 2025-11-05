@@ -57,7 +57,6 @@ class RoomModelTest(TestCase):
     
     def test_room_room_type_choices(self):
         """Test room_type choices validation"""
-        # Valid choices
         for room_type in ['chat', 'video']:
             room = Room.objects.create(
                 name=f'Test Room {room_type}',
@@ -66,13 +65,11 @@ class RoomModelTest(TestCase):
             )
             self.assertEqual(room.room_type, room_type)
         
-        # Invalid choice (will be saved but not a valid choice)
         room = Room.objects.create(
             name='Invalid Room',
             creator=self.creator,
             room_type='invalid'
         )
-        # get_room_type_display() will return the value if not a valid choice
         self.assertEqual(room.room_type, 'invalid')
     
     def test_room_ordering(self):
@@ -86,6 +83,6 @@ class RoomModelTest(TestCase):
             creator=self.creator
         )
         rooms = list(Room.objects.all())
-        self.assertEqual(rooms[0], room2)  # Most recent first
+        self.assertEqual(rooms[0], room2)
         self.assertEqual(rooms[1], room1)
 

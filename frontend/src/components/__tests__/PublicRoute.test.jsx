@@ -3,7 +3,6 @@ import { screen, render } from '@testing-library/react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import PublicRoute from '../PublicRoute';
 
-// Mock useAuth
 const mockUseAuth = vi.fn();
 vi.mock('../../context/AuthContext', () => ({
   useAuth: () => mockUseAuth(),
@@ -37,7 +36,6 @@ describe('PublicRoute', () => {
     );
 
     window.history.pushState({}, '', '/login');
-    // Should redirect to /rooms when authenticated
     expect(screen.queryByText('Login Page')).not.toBeInTheDocument();
   });
 

@@ -19,7 +19,6 @@ class TokenAuthMiddleware:
         self.jwt_auth = JWTAuthentication()
 
     def _validate_and_get_user(self, raw_token):
-        # Synchronous helper: validate JWT and fetch user
         UntypedToken(raw_token)
         validated = self.jwt_auth.get_validated_token(raw_token)
         user = self.jwt_auth.get_user(validated)

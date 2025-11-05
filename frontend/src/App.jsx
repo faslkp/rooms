@@ -12,9 +12,11 @@ function AppRoutes() {
   const { loading } = useAuth();
   if (loading) return null;
   return (
-    <>
+    <div className="flex flex-col h-full overflow-hidden">
       <Navbar />
-      <Routes>
+      <div className="flex-1 overflow-hidden min-h-0">
+        <div className="h-full overflow-y-auto overflow-x-hidden">
+          <Routes>
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
 
@@ -37,8 +39,10 @@ function AppRoutes() {
 
         <Route path="/" element={<Navigate to="/rooms" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </>
+          </Routes>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -46,7 +50,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <div className="min-h-screen bg-gray-50 text-gray-900">
+        <div className="h-screen w-screen bg-gray-50 text-gray-900 overflow-hidden flex flex-col">
           <AppRoutes />
         </div>
       </AuthProvider>

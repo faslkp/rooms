@@ -60,7 +60,7 @@ class ChatConsumerTest(TestCase):
         )
         connected, subprotocol = await communicator.connect()
         self.assertFalse(connected)
-        self.assertEqual(communicator.close_code, 4401)  # Custom unauthorized code
+        self.assertEqual(communicator.close_code, 4401)
         await communicator.disconnect()
     
     async def test_connect_invalid_room(self):
@@ -72,7 +72,7 @@ class ChatConsumerTest(TestCase):
         )
         connected, subprotocol = await communicator.connect()
         self.assertFalse(connected)
-        self.assertEqual(communicator.close_code, 4404)  # Custom not found code
+        self.assertEqual(communicator.close_code, 4404)
         await communicator.disconnect()
     
     async def test_connect_inactive_room(self):
@@ -102,20 +102,17 @@ class ChatConsumerTest(TestCase):
         connected, subprotocol = await communicator.connect()
         self.assertTrue(connected)
         
-        # Send a chat message
         message_data = {
             'type': 'chat-message',
             'content': 'Hello, world!'
         }
         await communicator.send_json_to(message_data)
         
-        # Receive the broadcast message
         response = await communicator.receive_json_from()
         self.assertEqual(response['type'], 'chat-message')
         self.assertEqual(response['content'], 'Hello, world!')
         self.assertEqual(response['user']['id'], self.user.id)
         
-        # Verify message was saved to database
         message_count = await database_sync_to_async(Message.objects.filter(room=self.room).count)()
         self.assertEqual(message_count, 1)
         
@@ -131,20 +128,17 @@ class ChatConsumerTest(TestCase):
         connected, subprotocol = await communicator.connect()
         self.assertTrue(connected)
         
-        # Send empty message
         message_data = {
             'type': 'chat-message',
-            'content': '   '  # Only whitespace
+            'content': '   '
         }
         await communicator.send_json_to(message_data)
         
-        # Should not receive a response
-        # Use timeout to ensure nothing is received
         try:
             response = await asyncio.wait_for(communicator.receive_json_from(), timeout=0.5)
             self.fail("Should not receive response for empty message")
         except asyncio.TimeoutError:
-            pass  # Expected
+            pass
         
         await communicator.disconnect()
     
@@ -158,14 +152,12 @@ class ChatConsumerTest(TestCase):
         connected, subprotocol = await communicator.connect()
         self.assertTrue(connected)
         
-        # Send WebRTC offer
         offer_data = {
             'type': 'webrtc-offer',
             'sdp': 'test-sdp-offer'
         }
         await communicator.send_json_to(offer_data)
         
-        # Receive the relayed signal
         response = await communicator.receive_json_from()
         self.assertEqual(response['type'], 'webrtc-offer')
         self.assertEqual(response['sdp'], 'test-sdp-offer')
@@ -250,6 +242,5 @@ class ChatConsumerTest(TestCase):
         self.assertTrue(connected)
         
         await communicator.disconnect()
-        # Connection should be closed gracefully
         self.assertIsNotNone(communicator.close_code)
 
