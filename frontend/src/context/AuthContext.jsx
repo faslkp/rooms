@@ -30,6 +30,42 @@ export function AuthProvider({ children }) {
     }
   }, [access]);
 
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'auth') {
+        try {
+          if (e.newValue) {
+            const parsed = JSON.parse(e.newValue);
+            setUser(parsed.user || null);
+            setAccess(parsed.access || null);
+            setRefresh(parsed.refresh || null);
+          } else {
+            setUser(null);
+            setAccess(null);
+            setRefresh(null);
+          }
+        } catch {}
+      }
+    };
+
+    const handleTokenRefreshed = (e) => {
+      try {
+        const raw = localStorage.getItem('auth');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          setAccess(parsed.access || null);
+        }
+      } catch {}
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('auth-token-refreshed', handleTokenRefreshed);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('auth-token-refreshed', handleTokenRefreshed);
+    };
+  }, []);
+
   const saveAuth = (next) => {
     const payload = {
       user: next.user ?? user,
@@ -64,6 +100,22 @@ export function AuthProvider({ children }) {
     return me.data;
   };
 
+  const refreshToken = async () => {
+    if (!refresh) {
+      throw new Error('No refresh token available');
+    }
+
+    try {
+      const res = await api.post('/api/auth/token/refresh/', { refresh });
+      const newAccess = res.data.access;
+      saveAuth({ access: newAccess });
+      return newAccess;
+    } catch (error) {
+      logout();
+      throw error;
+    }
+  };
+
   const logout = () => {
     setUser(null);
     setAccess(null);
@@ -79,6 +131,7 @@ export function AuthProvider({ children }) {
     register,
     login,
     logout,
+    refreshToken,
     setUser,
   }), [user, access, refresh, loading]);
 

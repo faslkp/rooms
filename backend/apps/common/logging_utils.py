@@ -14,7 +14,7 @@ class RequestContextFilter(logging.Filter):
         return True
 
 class SensitiveDataFilter(logging.Filter):
-    header_re = re.compile(r"(Authorization|Cookie)\s*=\s*([^\s,;]+)", re.IGNORECASE)
+    header_re = re.compile(r"(Authorization|Cookie)\s*=\s*[^\s,;]+(?:\s+[^\s,;]+)*", re.IGNORECASE)
 
     def filter(self, record: logging.LogRecord) -> bool:
         try:
@@ -26,6 +26,7 @@ class SensitiveDataFilter(logging.Filter):
         for key in SENSITIVE_KEYS:
             pattern = re.compile(r'(\"?' + re.escape(key) + r'\"?\s*[:=]\s*)(\".*?\"|[^,}\s]+)', re.IGNORECASE)
             msg = pattern.sub(r'\1***', msg)
+        msg = re.sub(r'\btoken\w+\b', '***', msg, flags=re.IGNORECASE)
         record.msg = msg
         record.args = ()
         return True

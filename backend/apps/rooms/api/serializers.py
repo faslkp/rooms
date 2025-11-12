@@ -17,10 +17,12 @@ class RoomSerializer(serializers.ModelSerializer):
 
 class RoomCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating rooms (POST requests)"""
+    creator = UserSerializer(read_only=True)
     
     class Meta:
         model = Room
-        fields = ['name', 'description', 'room_type']
+        fields = ['id', 'name', 'description', 'room_type', 'creator', 'created_at']
+        read_only_fields = ['id', 'creator', 'created_at']
     
     def validate_name(self, value):
         """Ensure name is not empty"""

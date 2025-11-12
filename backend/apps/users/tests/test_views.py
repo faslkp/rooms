@@ -11,7 +11,7 @@ class UserRegistrationViewTest(TestCase):
     
     def setUp(self):
         self.client = APIClient()
-        self.register_url = '/auth/register/'
+        self.register_url = '/api/auth/register/'
     
     def test_register_success(self):
         """Test successful user registration"""
@@ -75,7 +75,7 @@ class UserLoginViewTest(TestCase):
     
     def setUp(self):
         self.client = APIClient()
-        self.login_url = '/auth/login/'
+        self.login_url = '/api/auth/login/'
         self.user = User.objects.create_user(
             email='test@example.com',
             name='Test User',
@@ -128,7 +128,7 @@ class UserProfileViewTest(TestCase):
     
     def setUp(self):
         self.client = APIClient()
-        self.profile_url = '/auth/profile/'
+        self.profile_url = '/api/auth/profile/'
         self.user = User.objects.create_user(
             email='test@example.com',
             name='Test User',
@@ -186,7 +186,7 @@ class UserLogoutViewTest(TestCase):
     
     def setUp(self):
         self.client = APIClient()
-        self.logout_url = '/auth/logout/'
+        self.logout_url = '/api/auth/logout/'
         self.user = User.objects.create_user(
             email='test@example.com',
             name='Test User',

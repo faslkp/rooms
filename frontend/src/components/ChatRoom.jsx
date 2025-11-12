@@ -92,7 +92,15 @@ export default function ChatRoom({ roomId, token, wsBase = (import.meta.env.VITE
           )}
         </div>
       )}
-      <div ref={messagesContainerRef} className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-white border rounded p-3 space-y-2" style={{ maxHeight: '100%' }}>
+      <div 
+        ref={messagesContainerRef} 
+        className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-white border rounded p-3 space-y-2 [&::-webkit-scrollbar]:hidden" 
+        style={{ 
+          maxHeight: '100%',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+        }}
+      >
         {messages.map((m) => (
           <div key={m.id ?? Math.random()} className="text-sm break-words">
             <span className="font-medium">{m.user?.name || m.user?.email}:</span>{' '}

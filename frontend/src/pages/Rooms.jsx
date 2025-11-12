@@ -11,6 +11,7 @@ export default function Rooms() {
   const [description, setDescription] = useState('');
   const [roomType, setRoomType] = useState('chat');
   const [createError, setCreateError] = useState(null);
+  const [validationErrors, setValidationErrors] = useState({});
 
   const loadRooms = async () => {
     setLoading(true);
@@ -29,20 +30,51 @@ export default function Rooms() {
     loadRooms();
   }, []);
 
+  const validateForm = () => {
+    const errors = {};
+    const trimmedName = name.trim();
+    
+    if (!trimmedName) {
+      errors.name = 'Room name is required';
+    } else if (trimmedName.length < 3) {
+      errors.name = 'Room name must be at least 3 characters';
+    } else if (trimmedName.length > 100) {
+      errors.name = 'Room name must be less than 100 characters';
+    }
+    
+    if (description && description.length > 500) {
+      errors.description = 'Description must be less than 500 characters';
+    }
+    
+    if (!roomType || !['chat', 'video'].includes(roomType)) {
+      errors.roomType = 'Invalid room type';
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const onCreate = async (e) => {
     e.preventDefault();
     setCreateError(null);
+    setValidationErrors({});
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     setCreating(true);
     try {
-      await api.post('/api/rooms/', {
-        name,
-        description,
+      const res = await api.post('/api/rooms/', {
+        name: name.trim(),
+        description: description.trim(),
         room_type: roomType,
       });
       setName('');
       setDescription('');
       setRoomType('chat');
-      await loadRooms();
+      setValidationErrors({});
+      setRooms((prevRooms) => [res.data, ...prevRooms]);
     } catch (err) {
       const data = err?.response?.data;
       setCreateError(
@@ -54,40 +86,86 @@ export default function Rooms() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 w-full h-full overflow-y-auto overflow-x-hidden">
+    <div
+      className="max-w-5xl mx-auto p-6 w-full h-full overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:hidden"
+      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+    >
       <h1 className="text-2xl font-bold mb-4">Rooms</h1>
 
       <form onSubmit={onCreate} className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-3 bg-white p-4 border rounded">
-        <input
-          type="text"
-          className="rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          placeholder="Room name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          className="rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          placeholder="Description (optional)"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <select
-          className="rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          value={roomType}
-          onChange={(e) => setRoomType(e.target.value)}
-        >
-          <option value="chat">Chat</option>
-          <option value="video">Video</option>
-        </select>
-        <button
-          type="submit"
-          disabled={creating}
-          className="rounded bg-indigo-600 text-white py-2 font-medium hover:bg-indigo-700 disabled:opacity-50"
-        >
-          {creating ? 'Creating...' : 'Create room'}
-        </button>
+        <div className="md:col-span-1">
+          <input
+            type="text"
+            className={`rounded border px-3 py-2 w-full focus:outline-none focus:ring-2 ${
+              validationErrors.name 
+                ? 'border-red-500 focus:ring-red-500' 
+                : 'border-gray-300 focus:ring-indigo-500'
+            }`}
+            placeholder="Room name"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (validationErrors.name) {
+                setValidationErrors((prev) => ({ ...prev, name: null }));
+              }
+            }}
+          />
+          {validationErrors.name && (
+            <div className="text-xs text-red-600 mt-1">{validationErrors.name}</div>
+          )}
+        </div>
+        <div className="md:col-span-1">
+          <input
+            type="text"
+            className={`rounded border px-3 py-2 w-full focus:outline-none focus:ring-2 ${
+              validationErrors.description 
+                ? 'border-red-500 focus:ring-red-500' 
+                : 'border-gray-300 focus:ring-indigo-500'
+            }`}
+            placeholder="Description (optional)"
+            value={description}
+            onChange={(e) => {
+              setDescription(e.target.value);
+              if (validationErrors.description) {
+                setValidationErrors((prev) => ({ ...prev, description: null }));
+              }
+            }}
+          />
+          {validationErrors.description && (
+            <div className="text-xs text-red-600 mt-1">{validationErrors.description}</div>
+          )}
+        </div>
+        <div className="md:col-span-1">
+          <select
+            className={`rounded border px-3 py-2 w-full focus:outline-none focus:ring-2 ${
+              validationErrors.roomType 
+                ? 'border-red-500 focus:ring-red-500' 
+                : 'border-gray-300 focus:ring-indigo-500'
+            }`}
+            value={roomType}
+            onChange={(e) => {
+              setRoomType(e.target.value);
+              if (validationErrors.roomType) {
+                setValidationErrors((prev) => ({ ...prev, roomType: null }));
+              }
+            }}
+          >
+            <option value="chat">Chat</option>
+            <option value="video">Video</option>
+          </select>
+          {validationErrors.roomType && (
+            <div className="text-xs text-red-600 mt-1">{validationErrors.roomType}</div>
+          )}
+        </div>
+        <div className="md:col-span-1">
+          <button
+            type="submit"
+            disabled={creating}
+            className="rounded bg-indigo-600 text-white py-2 font-medium hover:bg-indigo-700 disabled:opacity-50 w-full"
+          >
+            {creating ? 'Creating...' : 'Create room'}
+          </button>
+        </div>
         {createError && (
           <div className="md:col-span-4 text-sm text-red-600">{createError}</div>
         )}
